@@ -13,7 +13,7 @@ services:
   postgres:
     image: postgres:15.3-alpine3.18
     ports:
-      - 5431:5432
+      - 5432:5432
     volumes:
       - ./database:/var/lib/postgresql/data
     environment:
