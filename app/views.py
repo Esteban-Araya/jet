@@ -6,7 +6,8 @@ from json import loads
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework.generics import GenericAPIView
+from rest_framework_simplejwt.models import TokenUser
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -15,7 +16,24 @@ from rest_framework.permissions import IsAuthenticated
 class UserRegistrerView(viewsets.ModelViewSet):
     queryset = Users.objects.all()
     serializer_class = UserRegistrerSerializer
+
     permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        print("aaaaaaaaa")
+        return super().get(request, *args, **kwargs)
+
+class u(APIView):
+    queryset = Users.objects.all()
+    serializer_class = UserRegistrerSerializer
+
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        print(request.GET.get("token"))
+        return super().get(request, *args, **kwargs)
+
+
 
     
 
