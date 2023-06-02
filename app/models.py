@@ -22,16 +22,16 @@ class UserManagers(BaseUserManager):
         usuario.save()
         return usuario
     
-    def create_user(self,username, password,email,**extra_fields):
+    def create_user(self,username,email, password=None,**extra_fields):
         return self._create_user(username, password,email,False,False,**extra_fields)
     
-    def create_superuser(self,username, password,email,**extra_fields):
+    def create_superuser(self,username,email, password=None,**extra_fields):
         return self._create_user(username, password,email,True,True,**extra_fields)
 
 class Users(AbstractBaseUser):
     id = models.UUIDField(primary_key=True,default=uuid4, editable=False)
     username = models.CharField(max_length=20, null=False)
-    password = models.CharField(max_length=20, null=False)
+    #password = models.CharField(max_length=20, null=False)
     email = models.EmailField(null=False ,unique=True)
     numero = models.CharField(max_length=15, null=True)
     imagen_codificada = models.TextField(default=None, null=True)

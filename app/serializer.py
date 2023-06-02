@@ -9,14 +9,24 @@ class UserRegistrerSerializer(serializers.ModelSerializer):
         model = Users
         fields = '__all__'
     
-    def validate_password(self, value: str) -> str:
-        """
-        Hash value passed by user.
+    def create(self, validated_data):
+        user = Users(**validated_data)
+        user.set_password(validated_data["password"])
+        user.save()
+        return user
 
-        :param value: password of a user
-        :return: a hashed version of the password
-        """
-        return make_password(value)
+    def update(self, instance, validated_data):
+        user = super().update(instance, validated_data)
+        user.set_password(validated_data["password"])
+        return user
+    # def validate_password(self, value: str) -> str:
+    #     """
+    #     Hash value passed by user.
+
+    #     :param value: password of a user
+    #     :return: a hashed version of the password
+    #     """
+    #     return make_password(value)
 
     # def to_representation(self, instance):
         
@@ -37,7 +47,7 @@ class UserLoginSerializer(serializers.Serializer):
         print("---------------------")
         try:
             usuario = Users.objects.filter(email=data["email"])[0]
-            print("iguales: ",check_password(data["password"], usuario.password))
+            
             if not check_password(data["password"], usuario.password):
                 raise serializers.ValidationError("Email y/o contraseña incorrectos")
         except:  
@@ -45,5 +55,4 @@ class UserLoginSerializer(serializers.Serializer):
 
         return data
     
-    def pri(self):
-        print("AAAAAAAAAAA")
+   
