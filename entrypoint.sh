@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo 'Running collestatic...'
-python manage.py migrate collectstatic --no-input
+python manage.py migrate --no-input
 
 echo 'Applyng migrations'
 python manage.py wait_for_db
