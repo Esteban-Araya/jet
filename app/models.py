@@ -33,8 +33,8 @@ class Users(AbstractBaseUser):
     username = models.CharField(max_length=20, null=False)
     #password = models.CharField(max_length=20, null=False)
     email = models.EmailField(null=False ,unique=True)
-    numero = models.CharField(max_length=15, null=True)
-    imagen_codificada = models.TextField(default=None, null=True)
+    phoneNumber = models.CharField(max_length=15, null=True)
+    profilePicture = models.TextField(default=None, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     objects = UserManagers()
@@ -43,8 +43,9 @@ class Users(AbstractBaseUser):
     REQUIRED_FIELDS = ['username','password']
 
 
-class Dispositivos(models.Model):
+class Devices(models.Model):
     id = models.CharField(max_length=30, primary_key=True, null=False, editable=False )
     name = models.CharField(max_length=40, null=False)
-    id_user = models.CharField(max_length=30, null=False, editable=False )
+    id_user = models.CharField(max_length=50, null=False, editable=False )
+    typeD = models.CharField(max_length=50, null=False, editable=False )
     user = models.ManyToManyField("Users")
