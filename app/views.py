@@ -30,6 +30,7 @@ class UserRegistrerView(viewsets.ModelViewSet):
     
     serializer_class = UserSerializer
     queryset = serializer_class.Meta.model
+    serializer_token = TokenObtainPairSerializer
     # print(queryset)
     # print(Users.objects.all())
     #queryset = Users
@@ -39,7 +40,7 @@ class UserRegistrerView(viewsets.ModelViewSet):
         """
         Use this
 
-        
+        }
         Use this
         
         """
@@ -47,7 +48,21 @@ class UserRegistrerView(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        id = serializer.data["id"]
+
+        login = self.serializer_token(data = request.data)
+
+        if login.is_valid():
+        
+            return Response({"User":{
+                        'id':id,
+                        "token": login.validated_data.get('access')}}, 
+                        status=status.HTTP_201_CREATED, headers=headers)        
+        
+        
+        return Response({'error': login.errors}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        
 
     def list(self, request, *args, **kwargs):
         """
@@ -101,7 +116,7 @@ class LoginView(viewsets.ModelViewSet):
         
     NO use this
     
-    """
+            """
 
     serializer_class = UserLoginSerializer
     serializer_token = TokenObtainPairSerializer
@@ -118,16 +133,19 @@ class LoginView(viewsets.ModelViewSet):
 
         user = self.serializer_class(data=request.data)
         if not user.is_valid():
-
+            
             return Response({'errors': user.errors}, status=status.HTTP_401_UNAUTHORIZED)
         
-       
+        user = self.queryset.objects.filter(email=user.data["email"])
         
         login = self.serializer_token(data = request.data)
 
         if login.is_valid():
         
-            return Response({'token': login.validated_data.get('access'),"refresh":login.validated_data.get('refresh')}, status=status.HTTP_200_OK)     
+            return Response({"User":{
+                        'id':user[0].id,
+                        "token": login.validated_data.get('access')}}
+                        , status=status.HTTP_200_OK)     
         
         return Response({'error': login.errors}, status=status.HTTP_401_UNAUTHORIZED)
              
