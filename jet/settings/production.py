@@ -14,29 +14,29 @@ ALLOWED_HOSTS = ['*']
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME':os.environ.get('DB_NAME'),
         'USER':os.environ.get('DB_USER'),
         'PASSWORD':os.environ.get('DB_PASSWORD'),
         'HOST':os.environ.get('DB_HOST'),
-        'DATABASE_PORT':os.environ.get('DB_DATABASE_PORT'),
+        'PORT':os.environ.get('DB_PORT'),
     }
 }
 
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME':'postgres',
-#         'USER':'postgres',
-#         'PASSWORD':'postgres',
-#         'HOST':'postgres',
-#         'DATABASE_PORT':5432,
+#         'NAME': 'base_jet',
+#         'USER': 'postgres',
+#         'PASSWORD' : 'estebanquito',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
 #     }
 # }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=365),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=365),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
@@ -73,3 +73,9 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
+
+
+STATIC_ROOT = Path.joinpath(BASE_DIR,'staticfiles')
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+

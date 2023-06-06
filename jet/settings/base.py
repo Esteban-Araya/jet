@@ -45,6 +45,7 @@ LOCAL_APPS = [
 ]
 
 THIRD_APPS = [
+    'drf_yasg',
     "rest_framework",
     "rest_framework_simplejwt",
 ]
@@ -64,8 +65,14 @@ BASE_MIDDLEWARE = [
 LOCAL_MIDDLEWARE = [
 
 ]
+    
+THIRD_MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    
+]
 
-MIDDLEWARE = BASE_MIDDLEWARE + LOCAL_MIDDLEWARE
+
+MIDDLEWARE = BASE_MIDDLEWARE + LOCAL_MIDDLEWARE +THIRD_MIDDLEWARE
 
 ROOT_URLCONF = "jet.urls"
 
