@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
         
-        exclude = ['is_staff','is_active','last_login','id']
+        exclude = ['is_staff','is_active','last_login',]
     
     def create(self, validated_data):
         user = Users(**validated_data)
@@ -40,7 +40,7 @@ class UserLoginSerializer(serializers.Serializer):
     
     password = serializers.CharField(max_length=20, )
     email = serializers.EmailField()
-    
+    # id = serializers.UUIDField()
 
     def validate(self, data):
         print("---------------------")
