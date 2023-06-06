@@ -19,10 +19,20 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 JWT_authenticator = JWTAuthentication()
 
 class UserRegistrerView(viewsets.ModelViewSet):
+
+    """
+    NO use this
+
+        
+    NO use this
+    
+    """
     
     serializer_class = UserSerializer
-    queryset = serializer_class.Meta.model.objects.all()
-    #queryset = Users.objects.all()
+    queryset = serializer_class.Meta.model
+    # print(queryset)
+    # print(Users.objects.all())
+    #queryset = Users
 
    
     def create(self, request, *args, **kwargs):
@@ -44,7 +54,7 @@ class UserRegistrerView(viewsets.ModelViewSet):
         Use this
 
         
-        Con solo poner el token que te da el Login basta
+        Con solo poner el token que te da el 'Login' basta
         
         """
         response = JWT_authenticator.authenticate(request)
@@ -85,8 +95,17 @@ class UserRegistrerView(viewsets.ModelViewSet):
 
 class LoginView(viewsets.ModelViewSet):
 
+    """
+    NO use this
+
+        
+    NO use this
+    
+    """
+
     serializer_class = UserLoginSerializer
     serializer_token = TokenObtainPairSerializer
+    queryset = Users
     def list(self, request):
 
         """
