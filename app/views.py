@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from .models import Users
-from .serializer import UserRegistrerSerializer, UserLoginSerializer
+from .serializer import UserSerializer, UserLoginSerializer
 from json import loads
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -13,13 +13,54 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+
 # Create your views here.
 
 JWT_authenticator = JWTAuthentication()
 
-class UserRegistrerView(CreateAPIView):
-    queryset = Users.objects.all()
-    serializer_class = UserRegistrerSerializer
+class UserRegistrerView(viewsets.ModelViewSet):
+    
+    serializer_class = UserSerializer
+    queryset = serializer_class.Meta.model.objects.all()
+    #queryset = Users.objects.all()
+
+   
+    def create(self, request, *args, **kwargs):
+        """
+        Use this
+
+        
+        Use this
+        
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def list(self, request, *args, **kwargs):
+        """
+        Use this
+
+        
+        Con solo poner el token que te da el Login basta
+        
+        """
+        response = JWT_authenticator.authenticate(request)
+        if response is not None:
+           # unpacking
+           user , token = response
+           
+           
+           user = self.queryset.objects.filter(email=user)
+           user = self.serializer_class(user,many = True)
+           
+           return Response({"User":user.data})
+        
+
+        
+        return Response({"error": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
 
     # def put(self, request, *args, **kwargs):
     #     response = JWT_authenticator.authenticate(request)
@@ -35,41 +76,35 @@ class UserRegistrerView(CreateAPIView):
         
    
 
-class UserGetView(APIView):
-    queryset = Users.objects.all()
-    serializer_class = UserRegistrerSerializer
-    permission_classes = (IsAuthenticated,)
-    def get(self, request, *args, **kwargs):
-        response = JWT_authenticator.authenticate(request)
-        if response is not None:
-           # unpacking
-           user , token = response
-           
-           
-           user = Users.objects.filter(email=user)
-           user = UserRegistrerSerializer(user,many = True)
-           
-           return Response({"User":user.data})
-        
 
-        
-        return Response({"error": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
+
     
 
-class LoginView(TokenObtainPairView):
-
-    serializer_class = TokenObtainPairSerializer
     
-    def post(self, request):
+    
 
-        user = UserLoginSerializer(data=request.data)
+class LoginView(viewsets.ModelViewSet):
+
+    serializer_class = UserLoginSerializer
+    serializer_token = TokenObtainPairSerializer
+    def list(self, request):
+
+        """
+        Use this
+
+        
+        Use this
+        
+        """
+
+        user = self.serializer_class(data=request.data)
         if not user.is_valid():
 
-            return Response({'error': user.errors}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'errors': user.errors}, status=status.HTTP_401_UNAUTHORIZED)
         
        
         
-        login = self.serializer_class(data = request.data)
+        login = self.serializer_token(data = request.data)
 
         if login.is_valid():
         

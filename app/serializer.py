@@ -3,11 +3,12 @@ from .models import Users
 from django.contrib.auth.hashers import make_password,check_password
 
 
-class UserRegistrerSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Users
-        fields = '__all__'
+        
+        exclude = ['is_staff','is_active','last_login','id']
     
     def create(self, validated_data):
         user = Users(**validated_data)
@@ -39,8 +40,6 @@ class UserLoginSerializer(serializers.Serializer):
     
     password = serializers.CharField(max_length=20, )
     email = serializers.EmailField()
-
-
     
 
     def validate(self, data):
