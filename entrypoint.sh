@@ -9,4 +9,4 @@ python manage.py migrate
 
 echo 'Running server...'
 
-gunicorn jet.wsgi --bind 0.0.0.0:8000
+gunicorn jet.wsgi --bind 0.0.0.0:$PORT
