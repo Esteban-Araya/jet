@@ -131,14 +131,21 @@ class LoginView(viewsets.ModelViewSet):
         
         """
 
-        user = self.serializer_class(data=request.data)
+        
+        data = {
+            "password": request.headers["Password"],
+            "email" : request.headers["Email"],
+        }
+        
+        user = self.serializer_class(data=data)
+
         if not user.is_valid():
             
             return Response({'errors': user.errors}, status=status.HTTP_401_UNAUTHORIZED)
         
         user = self.queryset.objects.filter(email=user.data["email"])
         
-        login = self.serializer_token(data = request.data)
+        login = self.serializer_token(data = data)
 
         if login.is_valid():
         
