@@ -54,9 +54,9 @@ class UserRegistrerView(viewsets.ModelViewSet):
 
         if login.is_valid():
         
-            return Response({"User":{
+            return Response({
                         'id':id,
-                        "token": login.validated_data.get('access')}}, 
+                        "token": login.validated_data.get('access')}, 
                         status=status.HTTP_201_CREATED, headers=headers)        
         
         
