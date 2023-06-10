@@ -121,7 +121,7 @@ class LoginView(viewsets.ModelViewSet):
     serializer_class = UserLoginSerializer
     serializer_token = TokenObtainPairSerializer
     queryset = Users
-    def list(self, request):
+    def create(self, request):
 
         """
         Use this
@@ -132,12 +132,8 @@ class LoginView(viewsets.ModelViewSet):
         """
 
         
-        data = {
-            "password": request.headers["Password"],
-            "email" : request.headers["Email"],
-        }
         
-        user = self.serializer_class(data=data)
+        user = self.serializer_class(data=request.data)
 
         if not user.is_valid():
             
@@ -145,7 +141,7 @@ class LoginView(viewsets.ModelViewSet):
         
         user = self.queryset.objects.filter(email=user.data["email"])
         
-        login = self.serializer_token(data = data)
+        login = self.serializer_token(data = request.data)
 
         if login.is_valid():
         
