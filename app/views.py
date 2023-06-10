@@ -145,9 +145,9 @@ class LoginView(viewsets.ModelViewSet):
 
         if login.is_valid():
         
-            return Response({"User":{
+            return Response({
                         'id':user[0].id,
-                        "token": login.validated_data.get('access')}}
+                        "token": login.validated_data.get('access')}
                         , status=status.HTTP_200_OK)     
         
         return Response({'error': login.errors}, status=status.HTTP_401_UNAUTHORIZED)
