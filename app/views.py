@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from .models import Users
-from .serializer import UserSerializer, UserLoginSerializer
+from .serializer import UserSerializer, UserLoginSerializer, DevicesSerializer
 from json import loads
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -72,6 +72,7 @@ class UserRegistrerView(viewsets.ModelViewSet):
         Con solo poner el token que te da el 'Login' basta
         
         """
+        
         response = JWT_authenticator.authenticate(request)
         if response is not None:
            # unpacking
@@ -134,7 +135,7 @@ class LoginView(viewsets.ModelViewSet):
         user = self.serializer_class(data=request.data)
         if not user.is_valid():
             
-            return Response({'errors': user.errors}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'message': user.errors}, status=status.HTTP_401_UNAUTHORIZED)
         
         user = self.queryset.objects.filter(email=user.data["email"])
         
@@ -149,4 +150,21 @@ class LoginView(viewsets.ModelViewSet):
         
         return Response({'error': login.errors}, status=status.HTTP_401_UNAUTHORIZED)
              
+
+class DevicesViwests(viewsets.ModelViewSet):
+    serializer_class = DevicesSerializer
+
+    queryset = serializer_class.Meta.model.objects.all()
+
+    
+    # def create(self, request, *args, **kwargs):
+    #     id = request.data.get('id')  
         
+    #     serializer = self.get_serializer(data = request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     self.perform_create(serializer)
+
+    #     headers = self.get_success_headers(serializer.data)
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    

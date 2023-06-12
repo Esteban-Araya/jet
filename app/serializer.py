@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Users
+from .models import Users, Devices
 from django.contrib.auth.hashers import make_password,check_password
 
 
@@ -54,4 +54,9 @@ class UserLoginSerializer(serializers.Serializer):
 
         return data
     
-   
+
+class DevicesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = '__all__'
+        model = Devices
