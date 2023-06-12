@@ -60,7 +60,7 @@ class UserRegistrerView(viewsets.ModelViewSet):
                         status=status.HTTP_201_CREATED, headers=headers)        
         
         
-        return Response({'error': login.errors}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({'message': "info invalida"}, status=status.HTTP_401_UNAUTHORIZED)
         
         
 
@@ -86,7 +86,7 @@ class UserRegistrerView(viewsets.ModelViewSet):
         
 
         
-        return Response({"error": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
+        return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
 
     # def put(self, request, *args, **kwargs):
     #     response = JWT_authenticator.authenticate(request)
@@ -122,7 +122,7 @@ class LoginView(viewsets.ModelViewSet):
     serializer_class = UserLoginSerializer
     serializer_token = TokenObtainPairSerializer
     queryset = Users
-    def list(self, request):
+    def create(self, request):
 
         """
         Use this
@@ -135,7 +135,7 @@ class LoginView(viewsets.ModelViewSet):
         user = self.serializer_class(data=request.data)
         if not user.is_valid():
             
-            return Response({'message': user.errors}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'message': "informacion usuario no valida"}, status=status.HTTP_401_UNAUTHORIZED)
         
         user = self.queryset.objects.filter(email=user.data["email"])
         
@@ -148,7 +148,7 @@ class LoginView(viewsets.ModelViewSet):
                         "token": login.validated_data.get('access')}}
                         , status=status.HTTP_200_OK)     
         
-        return Response({'error': login.errors}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({'message': "informacion usuario no valida"}, status=status.HTTP_401_UNAUTHORIZED)
              
 
 class DevicesViwests(viewsets.ModelViewSet):
