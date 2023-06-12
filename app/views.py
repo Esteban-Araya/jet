@@ -54,9 +54,9 @@ class UserRegistrerView(viewsets.ModelViewSet):
 
         if login.is_valid():
         
-            return Response({"User":{
+            return Response({
                         'id':id,
-                        "token": login.validated_data.get('access')}}, 
+                        "token": login.validated_data.get('access')}, 
                         status=status.HTTP_201_CREATED, headers=headers)        
         
         
@@ -132,7 +132,10 @@ class LoginView(viewsets.ModelViewSet):
         
         """
 
+        
+        
         user = self.serializer_class(data=request.data)
+
         if not user.is_valid():
             
             return Response({'message': "informacion usuario no valida"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -143,28 +146,20 @@ class LoginView(viewsets.ModelViewSet):
 
         if login.is_valid():
         
-            return Response({"User":{
+            return Response({
                         'id':user[0].id,
-                        "token": login.validated_data.get('access')}}
+                        "token": login.validated_data.get('access')}
                         , status=status.HTTP_200_OK)     
         
         return Response({'message': "informacion usuario no valida"}, status=status.HTTP_401_UNAUTHORIZED)
              
+
 
 class DevicesViwests(viewsets.ModelViewSet):
     serializer_class = DevicesSerializer
 
     queryset = serializer_class.Meta.model.objects.all()
 
-    
-    # def create(self, request, *args, **kwargs):
-    #     id = request.data.get('id')  
-        
-    #     serializer = self.get_serializer(data = request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     self.perform_create(serializer)
 
-    #     headers = self.get_success_headers(serializer.data)
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    
+
