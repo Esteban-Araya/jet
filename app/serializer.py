@@ -12,6 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         user = Users(**validated_data)
+        print(user)
         user.set_password(validated_data["password"])
         user.save()
         return user
@@ -20,6 +21,30 @@ class UserSerializer(serializers.ModelSerializer):
         user = super().update(instance, validated_data)
         user.set_password(validated_data["password"])
         return user
+    
+    def to_representation(self, instance):
+        devices = []
+        my_devices = []
+        # print(DevicesSerializer(instance.devices.all()]).data)
+        for i in range(len(instance.devices.all())):
+            
+            devices.append(DevicesSerializer(instance.devices.all()[i]).data)
+
+        for i in range(len(instance.my_devices.all())):
+            
+            my_devices.append(DevicesSerializer(instance.my_devices.all()[i]).data)
+        
+        return {
+                "id": instance.id,
+                "username": instance.username,
+                "email": instance.email,
+                "phoneNumber": instance.phoneNumber,
+                "profilePicture": instance.profilePicture,
+                "devices":devices,
+                "my_devices":my_devices
+                }
+    
+
     # def validate_password(self, value: str) -> str:
     #     """
     #     Hash value passed by user.
@@ -58,5 +83,7 @@ class UserLoginSerializer(serializers.Serializer):
 class DevicesSerializer(serializers.ModelSerializer):
 
     class Meta:
+        #exclude = ["id_user_main","id" ]
         fields = '__all__'
+
         model = Devices
