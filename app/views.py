@@ -79,10 +79,11 @@ class UserRegistrerView(viewsets.ModelViewSet):
            user , token = response
            
            
-           user = self.queryset.objects.filter(email=user)
-           user = self.serializer_class(user,many = True)
+           user = self.queryset.objects.filter(email=user)[0]
            
-           return Response({"User":user.data})
+           user = self.serializer_class(user,many = False)
+          
+           return Response(user.data)
         
 
         
@@ -157,8 +158,40 @@ class LoginView(viewsets.ModelViewSet):
 
 class DevicesViwests(viewsets.ModelViewSet):
     serializer_class = DevicesSerializer
-
     queryset = serializer_class.Meta.model.objects.all()
+    serializer_token = TokenObtainPairSerializer
+
+    def create(self, request, *args, **kwargs):
+        """
+        Use this whit token
+
+        
+        Use this whit token
+        
+        """
+
+        response = JWT_authenticator.authenticate(request)
+        if response is None:
+            return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
+        user, token = response
+        id_user = token.payload['user_id']
+        data = request.data
+        data["id_user_main"] = id_user
+
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        device = self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        print(device)
+
+        
+
+        
+        return Response(serializer.data, 
+          status=status.HTTP_201_CREATED, headers=headers)        
+        
+        
+        return Response({'message': "info invalida"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 
