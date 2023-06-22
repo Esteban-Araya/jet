@@ -191,7 +191,6 @@ class DevicesViwests(viewsets.ModelViewSet):
           status=status.HTTP_201_CREATED, headers=headers)        
         
         
-        return Response({'message': "info invalida"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 
