@@ -1,0 +1,151 @@
+from rest_framework import viewsets
+from .models import Users
+from .serializer import UserSerializer, UserLoginSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+
+# Create your views here.
+
+JWT_authenticator = JWTAuthentication()
+
+class UserRegistrerView(viewsets.ModelViewSet):
+
+    """
+    NO use this
+
+        
+    NO use this
+    
+    """
+    
+    serializer_class = UserSerializer
+    queryset = serializer_class.Meta.model
+    serializer_token = TokenObtainPairSerializer
+    # print(queryset)
+    # print(Users.objects.all())
+    #queryset = Users
+
+   
+    def create(self, request, *args, **kwargs):
+        """
+        Use this
+
+        }
+        Use this
+        
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        id = serializer.data["id"]
+
+        login = self.serializer_token(data = request.data)
+
+        if login.is_valid():
+        
+            return Response({
+                        'id':id,
+                        "token": login.validated_data.get('access')}, 
+                        status=status.HTTP_201_CREATED, headers=headers)        
+        
+        
+        return Response({'message': "info invalida"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        
+
+    def list(self, request, *args, **kwargs):
+        """
+        Use this
+
+        
+        Con solo poner el token que te da el 'Login' basta
+        
+        """
+        
+        response = JWT_authenticator.authenticate(request)
+        if response is not None:
+           # unpacking
+           user , token = response
+           
+           
+           user = self.queryset.objects.filter(email=user)
+           user = self.serializer_class(user,many = True)
+           
+           return Response({"User":user.data})
+        
+
+        
+        return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
+
+    # def put(self, request, *args, **kwargs):
+    #     response = JWT_authenticator.authenticate(request)
+    #     if response is not None:
+    #        # unpacking
+    #        user , token = response
+           
+    #        return user.put(request, *args, **kwargs)
+        
+
+        
+    #     return Response({"error": "token no valido"},status=status.HTTP_401_UNAUTHORIZED)
+        
+   
+
+
+
+    
+
+    
+    
+
+class LoginView(viewsets.ModelViewSet):
+
+    """
+    NO use this
+
+        
+    NO use this
+    
+            """
+
+    serializer_class = UserLoginSerializer
+    serializer_token = TokenObtainPairSerializer
+    queryset = Users
+    def create(self, request):
+
+        """
+        Use this
+
+        
+        Use this
+        
+        """
+
+        
+        
+        user = self.serializer_class(data=request.data)
+
+        if not user.is_valid():
+            
+            return Response({'message': "informacion usuario no valida"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        user = self.queryset.objects.filter(email=user.data["email"])
+        
+        login = self.serializer_token(data = request.data)
+
+        if login.is_valid():
+        
+            return Response({
+                        'id':user[0].id,
+                        "token": login.validated_data.get('access')}
+                        , status=status.HTTP_200_OK)     
+        
+        return Response({'message': "informacion usuario no valida"}, status=status.HTTP_401_UNAUTHORIZED)
+             
+
+
+
