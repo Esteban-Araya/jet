@@ -23,16 +23,17 @@ class UserSerializer(serializers.ModelSerializer):
         return user
     
     def to_representation(self, instance):
-        devices = []
-        my_devices = []
+        devices = DevicesSerializer(instance.devices.all(), many = True)
+        my_devices = DevicesSerializer(instance.my_devices.all(), many = True)
         # print(DevicesSerializer(instance.devices.all()]).data)
-        for i in range(len(instance.devices.all())):
+        # for i in range(len(instance.devices.all())):
             
-            devices.append(DevicesSerializer(instance.devices.all()[i]).data)
+        #     devices.append(DevicesSerializer(instance.devices.all()[i]).data)
 
-        for i in range(len(instance.my_devices.all())):
+        # for i in range(len(instance.my_devices.all())):
             
-            my_devices.append(DevicesSerializer(instance.my_devices.all()[i]).data)
+        #     my_devices.append(DevicesSerializer(instance.my_devices.all()[i]).data)
+            
         
         return {
                 "id": instance.id,
@@ -40,8 +41,8 @@ class UserSerializer(serializers.ModelSerializer):
                 "email": instance.email,
                 "phoneNumber": instance.phoneNumber,
                 "profilePicture": instance.profilePicture,
-                "devices":devices,
-                "my_devices":my_devices
+                "devices":devices.data,
+                "my_devices":my_devices.data
                 }
     
 
