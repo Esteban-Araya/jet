@@ -161,6 +161,22 @@ class DevicesViwests(viewsets.ModelViewSet):
     queryset = serializer_class.Meta.model.objects.all()
     serializer_token = TokenObtainPairSerializer
 
+    def list(self, request, *args, **kwargs):
+        response = JWT_authenticator.authenticate(request)
+        if response is None:
+            return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
+        user, token = response
+        id_user = token.payload['user_id']
+        my_devices = self.queryset.filter(id_user_main=id_user)
+        my_devices = self.serializer_class(my_devices,many = True)
+
+        devices = self.queryset.filter(users_id=id_user)
+        devices = self.serializer_class(devices,many = True)
+        print(devices.data)
+
+        return Response({"my_devices":my_devices.data, 
+                         "devices": [] }, status=status.HTTP_200_OK)
+
     def create(self, request, *args, **kwargs):
         """
         Use this whit token
