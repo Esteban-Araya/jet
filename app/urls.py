@@ -1,6 +1,6 @@
 from django.urls import path,include
 from rest_framework.routers import DefaultRouter
-from .views import  UserRegistrerView, LoginView, DevicesViwests
+from .views import  UserRegistrerView, LoginView, DevicesViwests,RecordViewsets
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -9,20 +9,11 @@ from rest_framework_simplejwt.views import (
 
 router = DefaultRouter()
 
-
 router.register(r"user", UserRegistrerView, basename="user")
 router.register(r"login", LoginView, basename="user_login")
 router.register(r"device", DevicesViwests, basename="device")
+router.register(r"record", RecordViewsets, basename="record")
 
-# urlpatterns = router.urls
 
-urlpatterns = [
-    #path('user/', include("router.urls"), name=''),
-    #path('user/', UserGetView.as_view()),
-    #path('user/registrer/', UserRegistrerView.as_view()),
-    #path('user/login/', LoginView.as_view(), name="login"),
-    #path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    #path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    #path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-] + router.urls
+urlpatterns = router.urls
     

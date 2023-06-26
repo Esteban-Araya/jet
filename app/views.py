@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from .models import Users
-from .serializer import UserSerializer, UserLoginSerializer, DevicesSerializer
+from .models import Users,Devices
+from .serializer import UserSerializer, UserLoginSerializer, DevicesSerializer, RecordSerializer
 from json import loads
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -31,11 +31,7 @@ class UserRegistrerView(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     queryset = serializer_class.Meta.model
     serializer_token = TokenObtainPairSerializer
-    # print(queryset)
-    # print(Users.objects.all())
-    #queryset = Users
 
-   
     def create(self, request, *args, **kwargs):
         """
         Use this
@@ -89,23 +85,6 @@ class UserRegistrerView(viewsets.ModelViewSet):
         
         return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
 
-    # def put(self, request, *args, **kwargs):
-    #     response = JWT_authenticator.authenticate(request)
-    #     if response is not None:
-    #        # unpacking
-    #        user , token = response
-           
-    #        return user.put(request, *args, **kwargs)
-        
-
-        
-    #     return Response({"error": "token no valido"},status=status.HTTP_401_UNAUTHORIZED)
-        
-   
-
-
-
-    
 
     
     
@@ -230,14 +209,40 @@ class DevicesViwests(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         device = self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        print(device)
-
-        
-
-        
+          
         return Response(serializer.data, 
           status=status.HTTP_201_CREATED, headers=headers)        
         
+class RecordViewsets(viewsets.ModelViewSet):
+    serializer_class = RecordSerializer
+    queryset = serializer_class.Meta.model.objects.all()
+    queryset_device = Devices.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        device_id =request.data["device_id"]
+        response = JWT_authenticator.authenticate(request)
+
+        if response is None:
+            return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
+        user, token = response
+        request.data["user_id"] = user.id
+        
+        device = self.queryset_device.filter(id = device_id)
+        
+        if user.my_devices.filter(id = device_id) or user.devices.filter(id = device_id): 
+            device = device[0]
+            device.turn_on = request.data["turn_on"]
+            device.save()
+
+            return super().create(request, *args, **kwargs)
+        
+        if not device:
+            return Response({"message":f"device ({device_id}) does not exist" }, status=status.HTTP_400_BAD_REQUEST) 
+
+        return Response({"message":f"{user.username} does not have access to this device" }, status=status.HTTP_400_BAD_REQUEST) 
+       
+    
+         
         
 
 
