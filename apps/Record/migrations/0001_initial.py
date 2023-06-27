@@ -11,33 +11,38 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ("Devices", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name="Devices",
+            name="Record",
             fields=[
                 (
                     "id",
-                    models.CharField(
-                        max_length=30, primary_key=True, serialize=False, unique=True
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
                     ),
                 ),
-                ("name", models.CharField(max_length=40)),
-                ("device_type", models.CharField(max_length=50)),
                 ("turn_on", models.BooleanField(default=False)),
+                ("time", models.DateTimeField(auto_now_add=True)),
                 (
-                    "id_user_main",
+                    "device_id",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="my_devices",
-                        to=settings.AUTH_USER_MODEL,
+                        related_name="record",
+                        to="Devices.devices",
                     ),
                 ),
                 (
-                    "users_id",
-                    models.ManyToManyField(
-                        null=True, related_name="devices", to=settings.AUTH_USER_MODEL
+                    "user_id",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="record",
+                        to=settings.AUTH_USER_MODEL,
                     ),
                 ),
             ],

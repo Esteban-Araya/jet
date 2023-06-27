@@ -24,11 +24,7 @@ class UserRegistrerView(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     queryset = serializer_class.Meta.model
     serializer_token = TokenObtainPairSerializer
-    # print(queryset)
-    # print(Users.objects.all())
-    #queryset = Users
 
-   
     def create(self, request, *args, **kwargs):
         """
         Use this
@@ -72,32 +68,16 @@ class UserRegistrerView(viewsets.ModelViewSet):
            user , token = response
            
            
-           user = self.queryset.objects.filter(email=user)
-           user = self.serializer_class(user,many = True)
+           user = self.queryset.objects.filter(email=user)[0]
            
-           return Response({"User":user.data})
+           user = self.serializer_class(user,many = False)
+          
+           return Response(user.data)
         
 
         
         return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
 
-    # def put(self, request, *args, **kwargs):
-    #     response = JWT_authenticator.authenticate(request)
-    #     if response is not None:
-    #        # unpacking
-    #        user , token = response
-           
-    #        return user.put(request, *args, **kwargs)
-        
-
-        
-    #     return Response({"error": "token no valido"},status=status.HTTP_401_UNAUTHORIZED)
-        
-   
-
-
-
-    
 
     
     
@@ -145,7 +125,4 @@ class LoginView(viewsets.ModelViewSet):
                         , status=status.HTTP_200_OK)     
         
         return Response({'message': "informacion usuario no valida"}, status=status.HTTP_401_UNAUTHORIZED)
-             
-
-
 

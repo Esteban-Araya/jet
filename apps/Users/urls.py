@@ -5,10 +5,9 @@ from .viewsets import LoginView,UserRegistrerView
 router = DefaultRouter()
 
 
-router.register(r"login", LoginView, basename="device")
+router.register(r"login", LoginView, basename="login")
 router.register(r"registrer", UserRegistrerView, basename="registrer")
 
-# urlpatterns = router.urls
 
 urlpatterns = router.urls
     

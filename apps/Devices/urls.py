@@ -4,9 +4,7 @@ from .viewsets import DevicesViwests
 
 router = DefaultRouter()
 
-router.register(r"device", DevicesViwests, basename="device")
-
-# urlpatterns = router.urls
+router.register(r"devices", DevicesViwests, basename="devices")
 
 urlpatterns = router.urls
     

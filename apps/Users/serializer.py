@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Users
+from apps.Devices.serializer import DevicesSerializer
 from django.contrib.auth.hashers import check_password
 
 
@@ -12,6 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         user = Users(**validated_data)
+        print(user)
         user.set_password(validated_data["password"])
         user.save()
         return user
@@ -20,20 +22,21 @@ class UserSerializer(serializers.ModelSerializer):
         user = super().update(instance, validated_data)
         user.set_password(validated_data["password"])
         return user
-    # def validate_password(self, value: str) -> str:
-    #     """
-    #     Hash value passed by user.
-
-    #     :param value: password of a user
-    #     :return: a hashed version of the password
-    #     """
-    #     return make_password(value)
-
-    # def to_representation(self, instance):
-        
-    #     return instance
-          
     
+    def to_representation(self, instance):
+        devices = DevicesSerializer(instance.devices.all(), many = True)
+        my_devices = DevicesSerializer(instance.my_devices.all(), many = True)
+
+        
+        return {
+                "id": instance.id,
+                "username": instance.username,
+                "email": instance.email,
+                "phoneNumber": instance.phoneNumber,
+                "profilePicture": instance.profilePicture,
+                "devices":devices.data,
+                "my_devices":my_devices.data
+                }
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -43,7 +46,7 @@ class UserLoginSerializer(serializers.Serializer):
     # id = serializers.UUIDField()
 
     def validate(self, data):
-        print("---------------------")
+        
         try:
             usuario = Users.objects.filter(email=data["email"])[0]
             
@@ -53,4 +56,3 @@ class UserLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("Email o contraseña incorrectos")
 
         return data
-    
