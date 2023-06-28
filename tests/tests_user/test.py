@@ -2,12 +2,22 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 
 class TestUser(APITestCase):
+    token = ""
+    url = "/registrer/"
 
+    def get_user(self):
+
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.token)
+
+        response = self.client.get(self.url)
+        
+        self.assertEqual('Usuario',response.data["username"])
+    
     def test_registrer_ok(self):
-        self.url_registrer = "/user/"
+        
 
         response = self.client.post(
-            self.url_registrer,
+            self.url,
             {
                 "email" : "usuario@gmail.com",
                 "username" : "Usuario",
@@ -17,24 +27,25 @@ class TestUser(APITestCase):
             },
             format = 'json'
         )
-        
-
+        self.token = response.data["token"]
         self.assertEqual(status.HTTP_201_CREATED,response.status_code)
+        
+        self.get_user()
 
     def test_registrer_fall(self):
-        self.url_registrer = "/user/"
+
         response = self.client.post(
-            self.url_registrer,
+            self.url,
             {
-                "email" : "ksjklnxa",
                 "username" : 12314,
-                "password" : 234,
+                "password" : 234
                 
                 
             },
             format = 'json'
         )
-        
-        
     
         self.assertNotEqual(status.HTTP_201_CREATED,response.status_code)
+
+    
+    
