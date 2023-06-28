@@ -19,14 +19,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-# TODO SECRET_KEY = ""
-
-# SECURITY WARNING: don't run with debug turned on in production!
-#TODO DEBUG = True
-
-#TODO ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -41,7 +33,11 @@ BASE_APPS = [
 ]
 
 LOCAL_APPS = [
-    'app',
+    'apps.Users',
+    'apps.Devices',
+    'apps.Record',
+    
+    
 ]
 
 THIRD_APPS = [
@@ -106,18 +102,6 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = "jet.wsgi.application"
 
-
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -136,7 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = "app.Users"
+AUTH_USER_MODEL = "Users.Users"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
