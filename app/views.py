@@ -88,19 +88,6 @@ class UserRegistrerView(viewsets.ModelViewSet):
 
         
         return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
-
-    # def put(self, request, *args, **kwargs):
-    #     response = JWT_authenticator.authenticate(request)
-    #     if response is not None:
-    #        # unpacking
-    #        user , token = response
-           
-    #        return user.put(request, *args, **kwargs)
-        
-
-        
-    #     return Response({"error": "token no valido"},status=status.HTTP_401_UNAUTHORIZED)
-        
    
 
 
