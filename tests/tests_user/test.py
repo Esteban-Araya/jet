@@ -3,7 +3,11 @@ from rest_framework import status
 
 class TestUser(APITestCase):
     token = ""
+<<<<<<< HEAD
     url = "/user/"
+=======
+    url = "/registrer/"
+>>>>>>> origin/main
 
     def get_user(self):
 
@@ -44,8 +48,6 @@ class TestUser(APITestCase):
             },
             format = 'json'
         )
-        
-        
     
         self.assertNotEqual(status.HTTP_201_CREATED,response.status_code)
 

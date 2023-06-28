@@ -1,6 +1,10 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
+<<<<<<< HEAD
 from app.models import Users
+=======
+from apps.Users.models import Users
+>>>>>>> origin/main
 
 class TestRutina(APITestCase):
 
@@ -32,7 +36,11 @@ class TestRutina(APITestCase):
     
     def test_create_user(self):
         
+<<<<<<< HEAD
         url = "/user/"
+=======
+        url = "/registrer/"
+>>>>>>> origin/main
         response = self.client.post(
             url,
             {
