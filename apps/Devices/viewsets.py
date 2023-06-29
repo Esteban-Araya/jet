@@ -5,18 +5,21 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.settings import api_settings
+from rest_framework.mixins import CreateModelMixin
+
 
 # Create your views here.
 
 JWT_authenticator = JWTAuthentication()
 
-class DevicesViwests(viewsets.ModelViewSet):
+class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
     serializer_class = DevicesSerializer
     queryset = serializer_class.Meta.model.objects.all()
     serializer_token = TokenObtainPairSerializer
     queryset_user = Users.objects.all()
 
-    def partial_update(self, request ,*args, **kwargs):
+    def partial_update(self, request ,pk=None):
         """
         Add devices to others users
 
@@ -77,14 +80,6 @@ class DevicesViwests(viewsets.ModelViewSet):
             return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
         user, token = response
         id_user = token.payload['user_id']
-        data = request.data
-        data["id_user_main"] = id_user
+        request.data["id_user_main"] = id_user
 
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        device = self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-          
-        return Response(serializer.data, 
-          status=status.HTTP_201_CREATED, headers=headers)        
-
+        return super().create(request, *args, **kwargs)

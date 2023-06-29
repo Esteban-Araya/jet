@@ -5,25 +5,20 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
-
+from rest_framework.settings import api_settings
+from rest_framework.mixins import CreateModelMixin
 # Create your views here.
 
 JWT_authenticator = JWTAuthentication()
 
-class UserRegistrerView(viewsets.ModelViewSet):
+class UserRegisterView(viewsets.GenericViewSet, CreateModelMixin):
 
-    """
-    NO use this
 
-        
-    NO use this
-    
-    """
-    
     serializer_class = UserSerializer
     queryset = serializer_class.Meta.model
     serializer_token = TokenObtainPairSerializer
+
+   
 
     def create(self, request, *args, **kwargs):
         """
@@ -33,6 +28,8 @@ class UserRegistrerView(viewsets.ModelViewSet):
         Use this
         
         """
+        
+        
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -79,22 +76,12 @@ class UserRegistrerView(viewsets.ModelViewSet):
         return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
 
 
-    
-    
-
-class LoginView(viewsets.ModelViewSet):
-
-    """
-    NO use this
-
-        
-    NO use this
-    
-            """
+class LoginView(viewsets.GenericViewSet):
 
     serializer_class = UserLoginSerializer
     serializer_token = TokenObtainPairSerializer
     queryset = Users
+
     def create(self, request):
 
         """
@@ -105,8 +92,6 @@ class LoginView(viewsets.ModelViewSet):
         
         """
 
-        
-        
         user = self.serializer_class(data=request.data)
 
         if not user.is_valid():

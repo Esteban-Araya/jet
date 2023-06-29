@@ -3,7 +3,8 @@ from rest_framework import status
 
 class TestUser(APITestCase):
     token = ""
-    url = "/registrer/"
+
+    url = "/register/"
 
     def get_user(self):
 
@@ -21,7 +22,7 @@ class TestUser(APITestCase):
             {
                 "email" : "usuario@gmail.com",
                 "username" : "Usuario",
-                "password" : "1234",
+                "password" : "123456",
                 "numero" : "+42 3124-12",
                 
             },
