@@ -1,6 +1,8 @@
 from rest_framework import serializers
-from .models import Users, Devices
-from django.contrib.auth.hashers import make_password,check_password
+from rest_framework.exceptions import NotAcceptable
+from .models import Users
+from apps.Devices.serializer import DevicesSerializer
+from django.contrib.auth.hashers import check_password
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -11,7 +13,11 @@ class UserSerializer(serializers.ModelSerializer):
         exclude = ['is_staff','is_active','last_login',]
     
     def create(self, validated_data):
+        if len(validated_data["password"]) <= 5:
+            raise NotAcceptable("the length of the password is short") 
+
         user = Users(**validated_data)
+        
         user.set_password(validated_data["password"])
         user.save()
         return user
@@ -20,18 +26,22 @@ class UserSerializer(serializers.ModelSerializer):
         user = super().update(instance, validated_data)
         user.set_password(validated_data["password"])
         return user
-    # def validate_password(self, value: str) -> str:
-    #     """
-    #     Hash value passed by user.
-
-    #     :param value: password of a user
-    #     :return: a hashed version of the password
-    #     """
-    #     return make_password(value)
-
-    # def to_representation(self, instance):
+   
+    def to_representation(self, instance):
+        devices = DevicesSerializer(instance.devices.all(), many = True)
+        my_devices = DevicesSerializer(instance.my_devices.all(), many = True)
         
-    #     return instance
+        
+        return {
+                "id": instance.id,
+                "username": instance.username,
+                "email": instance.email,
+                "phoneNumber": instance.phoneNumber,
+                "profilePicture": instance.profilePicture,
+                "devices":devices.data,
+                "my_devices":my_devices.data
+                }
+
           
     
 
@@ -40,10 +50,9 @@ class UserLoginSerializer(serializers.Serializer):
     
     password = serializers.CharField(max_length=20, )
     email = serializers.EmailField()
-    # id = serializers.UUIDField()
 
     def validate(self, data):
-        print("---------------------")
+        
         try:
             usuario = Users.objects.filter(email=data["email"])[0]
             
@@ -55,8 +64,3 @@ class UserLoginSerializer(serializers.Serializer):
         return data
     
 
-class DevicesSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        fields = '__all__'
-        model = Devices

@@ -1,10 +1,9 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
-<<<<<<< HEAD
-from app.models import Users
-=======
+
 from apps.Users.models import Users
->>>>>>> origin/main
+
+
 
 class TestRutina(APITestCase):
 
@@ -36,17 +35,15 @@ class TestRutina(APITestCase):
     
     def test_create_user(self):
         
-<<<<<<< HEAD
-        url = "/user/"
-=======
-        url = "/registrer/"
->>>>>>> origin/main
+
+        url = "/register/"
+
         response = self.client.post(
             url,
             {
                 "email" : "usuario@gmail.com",
                 "username" : "Usuario",
-                "password" : "1234",
+                "password" : "123456",
                 "numero" : "+42 3124-12",
                 
             },

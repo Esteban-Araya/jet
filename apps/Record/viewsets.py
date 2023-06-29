@@ -5,14 +5,14 @@ from .serializer import RecordSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from rest_framework.mixins import CreateModelMixin
 
 # Create your views here.
 
 JWT_authenticator = JWTAuthentication()
 
 # Create your views here.
-class RecordViewsets(viewsets.ModelViewSet):
+class RecordViewsets(viewsets.GenericViewSet, CreateModelMixin):
     serializer_class = RecordSerializer
     queryset = serializer_class.Meta.model.objects.all()
     queryset_device = Devices.objects.all()
