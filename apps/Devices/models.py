@@ -8,6 +8,6 @@ class Devices(models.Model):
     id_user_main = models.ForeignKey(Users,on_delete=models.CASCADE,  related_name="my_devices" )
     device_type = models.CharField(max_length=50, null=False )
     users_id = models.ManyToManyField(Users, related_name="devices", null=True)
-    turn_on = models.BooleanField(null=False, default=False)
+    state = models.BooleanField(null=False, default=False)
 
     

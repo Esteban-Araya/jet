@@ -17,6 +17,9 @@ class RecordViewsets(viewsets.GenericViewSet, CreateModelMixin):
     queryset = serializer_class.Meta.model.objects.all()
     queryset_device = Devices.objects.all()
 
+    def list(self, request):
+        pass
+
     def create(self, request, *args, **kwargs):
         device_id =request.data["device_id"]
         response = JWT_authenticator.authenticate(request)
@@ -30,7 +33,7 @@ class RecordViewsets(viewsets.GenericViewSet, CreateModelMixin):
         
         if user.my_devices.filter(id = device_id) or user.devices.filter(id = device_id): 
             device = device[0]
-            device.turn_on = request.data["turn_on"]
+            device.state = request.data["state"]
             device.save()
 
             return super().create(request, *args, **kwargs)
@@ -39,4 +42,5 @@ class RecordViewsets(viewsets.GenericViewSet, CreateModelMixin):
             return Response({"message":f"device ({device_id}) does not exist" }, status=status.HTTP_400_BAD_REQUEST) 
 
         return Response({"message":f"{user.username} does not have access to this device" }, status=status.HTTP_400_BAD_REQUEST) 
-       
+    
+    

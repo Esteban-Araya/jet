@@ -5,9 +5,9 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.settings import api_settings
 from rest_framework.mixins import CreateModelMixin
-
+from rest_framework.decorators import action
+from apps.Record.serializer import RecordSerializer
 
 # Create your views here.
 
@@ -18,6 +18,12 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
     queryset = serializer_class.Meta.model.objects.all()
     serializer_token = TokenObtainPairSerializer
     queryset_user = Users.objects.all()
+
+    def isOwner(self,user, device):
+        if not user == device.id_user_main:
+            return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED)
+        
+        return True
 
     def partial_update(self, request ,pk=None):
         """
@@ -32,9 +38,9 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
         
         email = request.data["email"]
         device = self.get_object()
-        
-        if not user == device.id_user_main:
-            return Response({"message": "tokern no valido"},status=status.HTTP_401_UNAUTHORIZED)
+        owner = self.isOwner(user, device)
+        if not owner:
+            return owner
         
         try:
             otherUser = self.queryset_user.filter(email=email)[0]
@@ -50,6 +56,26 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
         device.users_id.add(otherUser)
 
         return Response({"message":f"the user {otherUser.username} now has accexs to {device.name}" }, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'])
+    def history(self, request):
+        response = JWT_authenticator.authenticate(request)
+        if response is None:
+            return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
+        user, token = response
+        id = request.data["id_device"]
+        device = self.queryset.filter(id=id)[0]
+        
+        owner = self.isOwner(user, device)
+        if not owner:
+            return owner
+
+        
+        device_history =RecordSerializer(device.record.all(), many = True).data
+        
+        return Response({"history":device_history, 
+                          }, status=status.HTTP_200_OK)
+        
 
     def list(self, request, *args, **kwargs):
         response = JWT_authenticator.authenticate(request)
