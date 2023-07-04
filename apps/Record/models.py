@@ -6,5 +6,5 @@ from apps.Devices.models import Devices
 class Record(models.Model):
     user_id = models.ForeignKey(Users,on_delete=models.CASCADE,  related_name="record" )
     device_id = models.ForeignKey(Devices,on_delete=models.CASCADE,  related_name="record")
-    turn_on = models.BooleanField(null=False, default=False)
+    state = models.BooleanField(null=False, default=False)
     time = models.DateTimeField(auto_now_add=True)
