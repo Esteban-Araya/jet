@@ -28,7 +28,7 @@ class UserViewsets(viewsets.GenericViewSet, CreateModelMixin):
         
         Request parameters below
         
-        Response
+        \nResponse\n
         {
             'id':'random UUID'
             'token': 'example token'
@@ -87,13 +87,13 @@ class UserViewsets(viewsets.GenericViewSet, CreateModelMixin):
         login user
 
         
-        Use this parameters in the request's body
+        \nUse this parameters in the request's body\n
         {
             'email': 'email@example.com', 
             'password':'1234ab' 
         }
 
-        response
+        \nResponse\n
         {
             'id':'random UUID'
             'token': 'example token'

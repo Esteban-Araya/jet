@@ -29,14 +29,15 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
         """
         Add devices to others users
 
-        In the {id} put the id of device
+        \nIn the {id} put the id of device
         send the token of the device's owner 
-        Request parameters
+
+        \nRequest parameters\n
         {
             'email' : 'person@gmail.com'
         }
 
-        Response
+        \nResponse\n
         {
             'message':'validation'
         }
@@ -73,13 +74,13 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
         """
         device's history
 
-        send the token of device's owner
-        Request parameters
+        \nsend the token of device's owner
+        Request parameters\n
         {
          'id_device': '12345678'
         }
 
-        Response
+        \nResponse\n
         {
           'history': [ 
             {
@@ -112,9 +113,9 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
         """
         get devices
         
-        send the token of devices's owner
+        \nsend the token of devices's owner
 
-        Response 
+        Response \n
         {
             'my_devices': 
             [
@@ -166,8 +167,8 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
         """
         create a devices
 
-        send the owner's token 
-        Request parameters
+        \nsend the owner's token 
+        Request parameters\n
         {
             "id": "12345",
             "name": "porton abajo",
@@ -175,7 +176,7 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
         }
         
 
-        Response below
+        \nResponse below
         """
 
         response = JWT_authenticator.authenticate(request)
@@ -186,3 +187,5 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
         request.data["id_user_main"] = id_user
 
         return super().create(request, *args, **kwargs)
+    
+    
