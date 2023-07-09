@@ -17,10 +17,14 @@ class RecordViewsets(viewsets.GenericViewSet, CreateModelMixin):
     queryset = serializer_class.Meta.model.objects.all()
     queryset_device = Devices.objects.all()
 
-    def list(self, request):
-        pass
+    
 
     def create(self, request, *args, **kwargs):
+        """
+        Change a diveci's state
+
+        Request paremeters and Response below  
+        """
         device_id =request.data["device_id"]
         response = JWT_authenticator.authenticate(request)
 

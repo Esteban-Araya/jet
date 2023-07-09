@@ -29,7 +29,18 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
         """
         Add devices to others users
 
-        you need send the user main token and send the email the other user in the body. Example: {"email" : "person@gmail.com"}
+        \nIn the {id} put the id of device
+        send the token of the device's owner 
+
+        \nRequest parameters\n
+        {
+            'email' : 'person@gmail.com'
+        }
+
+        \nResponse\n
+        {
+            'message':'validation'
+        }
         """
         response = JWT_authenticator.authenticate(request)
         if response is None:
@@ -57,8 +68,29 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
 
         return Response({"message":f"the user {otherUser.username} now has accexs to {device.name}" }, status=status.HTTP_200_OK)
 
+
     @action(detail=False, methods=['post'])
     def history(self, request):
+        """
+        device's history
+
+        \nsend the token of device's owner
+        Request parameters\n
+        {
+         'id_device': '12345678'
+        }
+
+        \nResponse\n
+        {
+          'history': [ 
+            {
+                'time': "2023-06-29T02:23:01.712324Z",
+                'state': true,
+                'user': 'name user'
+            }
+          ]
+        }
+        """
         response = JWT_authenticator.authenticate(request)
         if response is None:
             return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
@@ -78,6 +110,45 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
         
 
     def list(self, request, *args, **kwargs):
+        """
+        get devices
+        
+        \nsend the token of devices's owner
+
+        Response \n
+        {
+            'my_devices': 
+            [
+                {
+                'id': '241879',
+                'name': 'heladera piso bajo',
+                'device_type': 'heladera',
+                'state': false,
+                'id_user_main': '19e43e68-7cf8-4bb7-b238-1092e76dda49',
+                'users_id': 
+                    [
+                    '7c4b3a1a-f081-43a9-b0e8-d3fdb92ba033',
+                    'cab8e67d-1f8f-43ee-b0ee-59371e26c1a0'
+                    ]
+                }
+            ],
+            'other_devices': [
+                {
+                'id': '241879',
+                'name': 'heladera piso bajo',
+                'device_type': 'heladera',
+                'state': false,
+                'id_user_main': '7c4b3a1a-f081-43a9-b0e8-d3fdb92ba033',         
+                'users_id': 
+                    [
+                    '19e43e68-7cf8-4bb7-b238-1092e76dda49',
+                    'cab8e67d-1f8f-43ee-b0ee-59371e26c1a0'
+                    ]
+                }
+            ]
+        }
+        """
+
         response = JWT_authenticator.authenticate(request)
         if response is None:
             return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
@@ -90,15 +161,22 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
         devices = self.serializer_class(devices,many = True)
 
         return Response({"my_devices":my_devices.data, 
-                         "devices": devices.data }, status=status.HTTP_200_OK)
+                         "other_devices": devices.data }, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         """
-        Use this whit token
+        create a devices
 
+        \nsend the owner's token 
+        Request parameters\n
+        {
+            "id": "12345",
+            "name": "porton abajo",
+            "device_type": "porton"
+        }
         
-        Use this whit token
-        
+
+        \nResponse below
         """
 
         response = JWT_authenticator.authenticate(request)
@@ -109,3 +187,5 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
         request.data["id_user_main"] = id_user
 
         return super().create(request, *args, **kwargs)
+    
+    
