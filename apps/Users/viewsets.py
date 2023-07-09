@@ -5,28 +5,34 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.settings import api_settings
+from rest_framework.decorators import action
 from rest_framework.mixins import CreateModelMixin
-# Create your views here.
+
 
 JWT_authenticator = JWTAuthentication()
 
-class UserRegisterView(viewsets.GenericViewSet, CreateModelMixin):
+class UserViewsets(viewsets.GenericViewSet, CreateModelMixin):
 
 
     serializer_class = UserSerializer
     queryset = serializer_class.Meta.model
     serializer_token = TokenObtainPairSerializer
 
-   
+    
 
+   
     def create(self, request, *args, **kwargs):
         """
-        Use this
+        Register
 
-        }
-        Use this
         
+        Request parameters below
+        
+        Response
+        {
+            'id':'random UUID'
+            'token': 'example token'
+        }           
         """
         
         
@@ -52,11 +58,10 @@ class UserRegisterView(viewsets.GenericViewSet, CreateModelMixin):
 
     def list(self, request, *args, **kwargs):
         """
-        Use this
+        Get information about an user
 
         
-        Con solo poner el token que te da el 'Login' basta
-        
+        you need put a token        
         """
         
         response = JWT_authenticator.authenticate(request)
@@ -74,25 +79,28 @@ class UserRegisterView(viewsets.GenericViewSet, CreateModelMixin):
 
         
         return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
-
-
-class LoginView(viewsets.GenericViewSet):
-
-    serializer_class = UserLoginSerializer
-    serializer_token = TokenObtainPairSerializer
-    queryset = Users
-
-    def create(self, request):
+    
+    @action(detail=False, methods=['post'])
+    def login(self, request):
 
         """
-        Use this
+        login user
 
         
-        Use this
-        
+        Use this parameters in the request's body
+        {
+            'email': 'email@example.com', 
+            'password':'1234ab' 
+        }
+
+        response
+        {
+            'id':'random UUID'
+            'token': 'example token'
+        }
         """
 
-        user = self.serializer_class(data=request.data)
+        user = UserLoginSerializer(data=request.data)
 
         if not user.is_valid():
             
@@ -110,3 +118,5 @@ class LoginView(viewsets.GenericViewSet):
                         , status=status.HTTP_200_OK)     
         
         return Response({'message': "informacion usuario no valida"}, status=status.HTTP_401_UNAUTHORIZED)
+
+  
