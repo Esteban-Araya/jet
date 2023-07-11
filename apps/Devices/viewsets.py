@@ -152,6 +152,7 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
         response = JWT_authenticator.authenticate(request)
         if response is None:
             return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
+       
         user, token = response
         id_user = token.payload['user_id']
         my_devices = self.queryset.filter(id_user_main=id_user)
