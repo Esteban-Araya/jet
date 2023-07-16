@@ -61,7 +61,61 @@ class UserViewsets(viewsets.GenericViewSet, CreateModelMixin):
         Get information about an user
 
         
-        you need put a token        
+        You need put a token 
+
+        \nRespone\n  
+        {
+            "id": "348a6f47-a116-4f39-ac1e-a3b3d8b2b4df",
+            "username": "plo",
+            "email": "lo@lo.com",
+            "phoneNumber": null,
+            "profilePicture": null,
+            "devices": [
+                {
+                "id": "44444",
+                "name": "porton pa",
+                "device_type": "porton",
+                "state": false,
+                "id_user_main": "7c4b3a1a-f081-43a9-b0e8-d3fdb92ba033",
+                "users_id": [
+                    "19e43e68-7cf8-4bb7-b238-1092e76dda49",
+                    "348a6f47-a116-4f39-ac1e-a3b3d8b2b4df"
+                ]
+                }
+            ],
+            "my_devices": [
+            {
+                "id": "123",
+                "name": "porton li",
+                "device_type": "porton",
+                "state": false,
+                "id_user_main": "19e43e68-7cf8-4bb7-b238-1092e76dda49",
+                "users_id": [
+                    "7c4b3a1a-f081-43a9-b0e8-d3fdb92ba033",
+                    "348a6f47-a116-4f39-ac1e-a3b3d8b2b4df"
+                ]
+                }
+            ],
+            "recived_invitations": [
+                {
+                "owner": "pa@pa.com",
+                "reciver": "lo@lo.com",
+                "device": {
+                    "name": "porton pa",
+                    "id": "44444"
+                },
+                
+            ],
+            "sent_invitations": [
+                {
+                "owner": "lo@lo.com",
+                "reciver": "pa@pa.com",
+                "device": {
+                    "name": "porton papa",
+                    "id": "4892"
+                },
+            ]
+            }     
         """
         
         response = JWT_authenticator.authenticate(request)
