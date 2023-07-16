@@ -8,7 +8,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.decorators import action
 from apps.Record.serializer import RecordSerializer
-
+from apps.Invitations.serializer import InvitationSerializer, Invitations
 # Create your views here.
 
 JWT_authenticator = JWTAuthentication()
@@ -19,17 +19,65 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
     serializer_token = TokenObtainPairSerializer
     queryset_user = Users.objects.all()
 
+    def isNotValidJwt(self, request):
+        response = JWT_authenticator.authenticate(request)
+        if response is None:
+            return True,Response({"message": "token is not valid"},status=status.HTTP_401_UNAUTHORIZED )
+        return False, response 
+
+        
     def isOwner(self,user, device):
         if not user == device.id_user_main:
-            return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"message": "token is not valid"},status=status.HTTP_401_UNAUTHORIZED)
         
         return True
 
-    def partial_update(self, request ,pk=None):
+    @action(detail=True, methods=['patch'])
+    def reciveInvitation(self, request ,pk=None):
         """
-        Add devices to others users
+        Accept o reject invitation
 
         \nIn the {id} put the id of device
+        send a token  
+        
+        \nRequets('true' for accept - 'false' for reject)\n
+        {
+            "accept":true
+        }
+
+        \nResponse\n
+        {
+            "message": "invitation accepted"
+        }
+        """
+        response = self.isNotValidJwt(request)
+        if response[0]:
+            return response[1]
+        user, token = response[1]
+        device = self.get_object()
+        invitation = Invitations.objects.filter(reciver=user, device=device)
+        if not invitation:
+            return Response({"message":"invitation no exist"}, status=status.HTTP_400_BAD_REQUEST)
+        # invitation = InvitationSerializer(data={"reciver":user})
+        # invitation.is_valid()
+        print(invitation[0])
+        accept = request.data["accept"]
+        if accept:
+            device.users_id.add(user)
+            invitation[0].delete()
+            return Response({"message":"invitation accepted"}, status=status.HTTP_202_ACCEPTED)
+
+
+        return Response({"message":"invitation rejected"}, status=status.HTTP_200_OK)
+
+
+    @action(detail=True, methods=['post'])
+    def sendInvitation(self, request ,pk=None):
+        """
+        Send invitations to others users
+
+
+        In the {id} put the id of device
         send the token of the device's owner 
 
         \nRequest parameters\n
@@ -42,17 +90,17 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
             'message':'validation'
         }
         """
-        response = JWT_authenticator.authenticate(request)
-        if response is None:
-            return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
-        user, token = response
+        response = self.isNotValidJwt(request)
+        if response[0]:
+            return response[1]
+        user, token = response[1]
         
-        email = request.data["email"]
         device = self.get_object()
         owner = self.isOwner(user, device)
         if not owner:
             return owner
-        
+        email = request.data["email"]
+
         try:
             otherUser = self.queryset_user.filter(email=email)[0]
         except:
@@ -63,9 +111,15 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
             return Response({"message": f"the user {otherUser.username} aleredy had access to {device.name}"},status=status.HTTP_200_OK)
         elif otherUser == user:
                         return Response({"message": f"the user {otherUser.username} aleredy had access to {device.name}"},status=status.HTTP_200_OK)
-
-        device.users_id.add(otherUser)
-
+        data = {
+            "reciver": otherUser.id, 
+            "owner": user.id, 
+            "device": device.id
+        }
+        invitation = InvitationSerializer(data=data)
+        if not invitation.is_valid(raise_exception=True):
+             return Response({"message":invitation.error_messages}, status=status.HTTP_400_BAD_REQUEST)
+        invitation.save()
         return Response({"message":f"the user {otherUser.username} now has accexs to {device.name}" }, status=status.HTTP_200_OK)
 
 
@@ -91,10 +145,11 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
           ]
         }
         """
-        response = JWT_authenticator.authenticate(request)
-        if response is None:
-            return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
-        user, token = response
+        response = self.isNotValidJwt(request)
+        if response[0]:
+            return response[1]
+        user, token = response[1]
+
         id = request.data["id_device"]
         device = self.queryset.filter(id=id)[0]
         
@@ -113,9 +168,11 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
         """
         get devices
         
-        \nsend the token of devices's owner
 
-        Response \n
+
+        \nsend the token of devices's owner
+        Response 
+
         {
             'my_devices': 
             [
@@ -149,11 +206,11 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
         }
         """
 
-        response = JWT_authenticator.authenticate(request)
-        if response is None:
-            return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
-       
-        user, token = response
+        response = self.isNotValidJwt(request)
+        if response[0]:
+            return response[1]
+        user, token = response[1]
+
         id_user = token.payload['user_id']
         my_devices = self.queryset.filter(id_user_main=id_user)
         my_devices = self.serializer_class(my_devices,many = True)
@@ -180,10 +237,10 @@ class DevicesViwests(viewsets.GenericViewSet, CreateModelMixin):
         \nResponse below
         """
 
-        response = JWT_authenticator.authenticate(request)
-        if response is None:
-            return Response({"message": "token no valido"},status=status.HTTP_401_UNAUTHORIZED )
-        user, token = response
+        response = self.isNotValidJwt(request)
+        if response[0]:
+            return response[1]
+        user, token = response[1]
         id_user = token.payload['user_id']
         request.data["id_user_main"] = id_user
 
