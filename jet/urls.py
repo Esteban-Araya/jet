@@ -20,18 +20,19 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework.routers import DefaultRouter
+
 from apps.Users.urls import router as routerUsers
 from apps.Devices.urls import router as routerDevices
 from apps.Record.urls import router as routerRecord
-from rest_framework.routers import DefaultRouter
 
 # Crea un nuevo router
 router = DefaultRouter()
 
 
 router.registry.extend(routerUsers.registry)
-router.registry.extend(routerRecord.registry)
 router.registry.extend(routerDevices.registry)
+router.registry.extend(routerRecord.registry)
 
 
 schema_view = get_schema_view(

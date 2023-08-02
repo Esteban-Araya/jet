@@ -3,6 +3,8 @@ version: '3.9'
 services:
   django:
     build: .
+    ports:
+      - 8000:8000
     volumes:
       - .:/app
     depends_on:
@@ -18,20 +20,4 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
-
-  nginx:
-    image: nginx:1.25.1
-    ports:
-      - 8000:80
-      - 443:443
-    volumes:      
-      - ./config/nginx/conf.d:/etc/nginx/conf.d
-      - ./staticfiles:/code/static
-      - ./config/nginx/ssl:/etc/nginx/certs
-    depends_on:
-      - django
-
-volumes:
- .:
- database:
- staticfiles:
+  

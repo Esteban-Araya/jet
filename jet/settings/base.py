@@ -36,6 +36,7 @@ LOCAL_APPS = [
     'apps.Users',
     'apps.Devices',
     'apps.Record',
+    'apps.Invitations',
     
     
 ]

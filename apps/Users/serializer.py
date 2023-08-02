@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import NotAcceptable
 from .models import Users
 from apps.Devices.serializer import DevicesSerializer
+from apps.Invitations.serializer import InvitationSerializer
 from django.contrib.auth.hashers import check_password
 
 
@@ -30,7 +31,8 @@ class UserSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         devices = DevicesSerializer(instance.devices.all(), many = True)
         my_devices = DevicesSerializer(instance.my_devices.all(), many = True)
-        
+        recived_invitations = InvitationSerializer(instance.recived_invitations.all(),many=True)
+        sent_invitations = InvitationSerializer(instance.sent_invitations.all(),many=True)
         
         return {
                 "id": instance.id,
@@ -39,7 +41,9 @@ class UserSerializer(serializers.ModelSerializer):
                 "phoneNumber": instance.phoneNumber,
                 "profilePicture": instance.profilePicture,
                 "devices":devices.data,
-                "my_devices":my_devices.data
+                "my_devices":my_devices.data,
+                "recived_invitations": recived_invitations.data,
+                "sent_invitations": sent_invitations.data
                 }
 
           
